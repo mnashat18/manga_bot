@@ -1,7 +1,9 @@
 from telegram import InlineKeyboardButton
+import os
 
-# التوكن
-BOT_TOKEN = "8427717553:AAEeCZHXNbrec7dM8pD4Qg-3dcAggBBYz-s"
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+if not BOT_TOKEN:
+    raise RuntimeError("BOT_TOKEN is not set. Please add it to environment variables.")
 
 # القنوات المطلوبة للاشتراك
 REQUIRED_CHANNELS = [
@@ -172,4 +174,5 @@ MANHWA_LIST = {
         ]
     }
 }
+
 

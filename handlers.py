@@ -2,8 +2,9 @@ from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ContextTypes, CommandHandler, CallbackQueryHandler
 from config import BOT_TOKEN, main_menu_buttons, MANHWA_LIST
 from utils import check_subscription, subscription_keyboard, share_keyboard
-from database import DB_NAME, add_user, update_view, update_like, update_share, get_stats
-import sqlite3
+import psycopg2
+import os
+from database import add_user, update_view, update_like, update_share, get_stats
 from telegram import Update
 from telegram.ext import ContextTypes
 from telegram.ext import MessageHandler, filters
@@ -176,7 +177,7 @@ async def back_main(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     await query.message.reply_text("🏠 رجعت للقائمة الرئيسية:", reply_markup=InlineKeyboardMarkup(main_menu_buttons))
 async def notify_all(app, message: str):
-    conn = sqlite3.connect(DB_NAME)
+    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
     cursor = conn.cursor()
     cursor.execute("SELECT user_id FROM users")
     users = cursor.fetchall()
@@ -250,4 +251,5 @@ def setup_handlers(app):
     app.add_handler(CommandHandler("notify", notify_command)) 
     app.add_handler(MessageHandler(filters.VIDEO, get_file_id))
     app.add_handler(CallbackQueryHandler(how_to_watch, pattern="^how_to_watch$"))
+
     app.add_handler(CallbackQueryHandler(list_manga, pattern="^list_manga$"))
